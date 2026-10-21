@@ -4,7 +4,7 @@ import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutForm } from '../pages/Checkoutform';
 import { CheckoutOverview } from '../pages/CheckoutOverview';
-
+test.use({ storageState: { cookies: [], origins: [] } });
 //serial mode - login >> Add to Cart >> remove from Cart and contunie shopping>>add to cart and fill checkout and finsh
 
 test.describe.configure({ mode: 'serial' });
