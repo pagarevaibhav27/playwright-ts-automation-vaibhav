@@ -12,12 +12,12 @@ constructor(page : Page){
     this.checkout =page.locator('[data-test="checkout"]');
 }
 
-async removebackpackfromcartandcontinueshopping(){
+async removeBackpackAndContinueShopping(){
    await this.removebackpack.click();
     await this.continueshopping.click();
 }
 
-async clickcheckout(){
+async clickCheckout(){
    await this.checkout.click();
   
 }
