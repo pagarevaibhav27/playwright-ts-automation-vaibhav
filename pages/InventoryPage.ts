@@ -13,12 +13,12 @@ constructor(page: Page) {
     this.shopping_cart_link = page.getByRole('button', { name: /^Cart/ });
 }   
 
-async AddBackpackToCart() {
+async addBackpackToCart() {
     await this.backpack_addtocartbtn.click();
 
   }
 
-  async GoToCart() {
+  async goToCart() {
     await this.shopping_cart_link.click();
 
   }

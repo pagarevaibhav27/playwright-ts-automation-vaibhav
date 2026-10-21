@@ -28,8 +28,8 @@ test('SauceDemo login test', async () => {
 
 test('SauceDemo add backpack to cart', async () => {
   const inventoryPage = new InventoryPage(page);
-  await inventoryPage.AddBackpackToCart();
-  await inventoryPage.GoToCart();
+  await inventoryPage.addBackpackToCart();
+  await inventoryPage.goToCart();
   await expect(page).toHaveURL(/cart/);
 });
 
@@ -43,8 +43,8 @@ test('Remove added backpack from cart and continue shopping', async () => {
 //again add backpack to cart and click checkout
 test('SauceDemo add backpack to cart and click checkout', async () => {
   const inventoryPage = new InventoryPage(page);
-  await inventoryPage.AddBackpackToCart();
-  await inventoryPage.GoToCart();
+  await inventoryPage.addBackpackToCart();
+  await inventoryPage.goToCart();
   await expect(page).toHaveURL(/cart/);
   const cartPage = new CartPage(page);
   await cartPage.clickcheckout();
@@ -65,7 +65,7 @@ await checkoutform.clickContinue();
 
 test('finish checkout',async()=>{
 const checkoutfinish = new CheckoutOverview(page);
-checkoutfinish.clickfinish();
+await checkoutfinish.clickFinish();
 await expect(page).toHaveURL(/checkout-complete/);
 
 })
