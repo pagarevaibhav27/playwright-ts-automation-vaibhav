@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
-import { Checkoutform } from '../pages/Checkoutform';
+import { CheckoutForm } from '../pages/Checkoutform';
 import { CheckoutOverview } from '../pages/CheckoutOverview';
 
 //serial mode - login >> Add to Cart >> remove from Cart and contunie shopping>>add to cart and fill checkout and finsh
@@ -53,8 +53,8 @@ test('SauceDemo add backpack to cart and click checkout', async () => {
 
 //fill checkout form
 test('Fill checkout form', async () => {
-  const checkoutform = new Checkoutform(page);
-  await checkoutform.fillCheckoutform('Testfirstname','Testlastname','12345');
+  const checkoutform = new CheckoutForm(page);
+  await checkoutform.fillCheckoutForm('Testfirstname','Testlastname','12345');
 await checkoutform.clickContinue();
   
 
