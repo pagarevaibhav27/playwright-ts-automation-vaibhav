@@ -15,7 +15,7 @@ this.finishbtn = page.locator('[data-test="finish"]');
 }
 
 //function
-async clickfinish(){
+async clickFinish(){
     this.finishbtn.click();
 }
 
