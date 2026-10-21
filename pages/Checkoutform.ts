@@ -1,6 +1,6 @@
 import {Page,Locator,expect} from '@playwright/test'
 
-export class Checkoutform{
+export class CheckoutForm{
     readonly page:Page;
     readonly firstname: Locator;
     readonly lastname: Locator;
@@ -20,7 +20,7 @@ constructor(page:Page)
 }
 
 //function
-async fillCheckoutform(firstname:string,lastname:string,zip:string){
+async fillCheckoutForm(firstname:string,lastname:string,zip:string){
       await this.firstname.fill(firstname);
       await this.lastname.fill(lastname);
       await this.zipcode.fill(zip);
