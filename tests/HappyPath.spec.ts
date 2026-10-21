@@ -35,7 +35,7 @@ test('SauceDemo add backpack to cart', async () => {
 
 test('Remove added backpack from cart and continue shopping', async () => {
   const cartPage = new CartPage(page);
-  await cartPage.removebackpackfromcartandcontinueshopping();
+  await cartPage.removeBackpackAndContinueShopping();
   
   await expect(page).toHaveURL(/inventory/);
 });
@@ -47,7 +47,7 @@ test('SauceDemo add backpack to cart and click checkout', async () => {
   await inventoryPage.goToCart();
   await expect(page).toHaveURL(/cart/);
   const cartPage = new CartPage(page);
-  await cartPage.clickcheckout();
+  await cartPage.clickCheckout();
    await expect(page).toHaveURL(/checkout-step-one/);
 });
 

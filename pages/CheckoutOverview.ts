@@ -3,20 +3,20 @@ import {Page,Locator,expect} from '@playwright/test';
 //export
 export class CheckoutOverview{
 readonly page:Page ;
-readonly finishbtn: Locator;
+readonly finishButton: Locator;
 
 
 
 //constuctor
 constructor(page : Page){
 this.page = page;
-this.finishbtn = page.locator('[data-test="finish"]');
+this.finishButton = page.locator('[data-test="finish"]');
 
 }
 
 //function
 async clickFinish(){
-    this.finishbtn.click();
+   await this.finishButton.click();
 }
 
 }
