@@ -1,4 +1,4 @@
-import {test,expect,request,Route} from '@playwright/test';
+import {test,expect,} from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -6,24 +6,6 @@ test.describe.configure({ mode: 'serial' });
 let authtoken: string;  
 let BookingId: number;
 const invalidtoken = "invalidtok";
-
-test("TEST GET Booking 1",async ({request})=>{
-
-
-   const  getreponse = await request.get("https://restful-booker.herokuapp.com/booking/1");
-
-    const resstatus = await getreponse.status();
-    const resstatustext = await getreponse.statusText();
-   const res = await    getreponse.json();
-  
-   console.log(resstatus);
-    console.log(resstatustext);
-    console.log(res);
-    await expect(getreponse.status()).toBe(200);
-
-}
-
-)
 
 
 
@@ -40,7 +22,7 @@ test("Auth",async({request})=>{
     const authis = await auth.json();
     authtoken = authis.token;
 
-    await console.log("Auth token is "+authtoken);
+     console.log("Auth token is "+authtoken);
 }
 
 )
@@ -71,6 +53,30 @@ test("Create New Booking",async ({request})=>{
 }
 )
 
+test("TEST GET created Booking ",async ({request})=>{
+    const geturl = "https://restful-booker.herokuapp.com/booking/"+BookingId;
+    console.log("get url formed is "+geturl)
+
+   const  getreponse = await request.get(geturl);
+     console.log("get response is",getreponse.json());
+
+    const resstatus =  getreponse.status();
+    const resstatustext =  getreponse.statusText();
+   //const res = await getreponse.json();
+   const res = await getreponse.json();
+  
+   console.log(resstatus);
+    console.log(resstatustext);
+    console.log(res);
+     expect(getreponse.status()).toBe(200);
+     expect(res.firstname).toBe('Jim');
+expect(res.totalprice).toBe(111);
+
+}
+
+)
+
+
 
 //Updating booking created in previous test by passing the booking ID
 test("Test PUT for booking id created in POST Test",async({request})=>{
@@ -93,9 +99,9 @@ test("Test PUT for booking id created in POST Test",async({request})=>{
     const putb = await put.json();
    console.log(putb);
     
-   await expect(put.status()).toBe(200);
-   await expect(putb.firstname).toBe('James');
-   await expect(putb.totalprice).toBe(222);
+    expect(put.status()).toBe(200);
+    expect(putb.firstname).toBe('James');
+    expect(putb.totalprice).toBe(222);
 
    console.log("Updated total Price is "+putb.totalprice);
 
@@ -108,46 +114,37 @@ test("DELETE created/updated booking record",async({request})=>{
 
    const del = await request.delete("https://restful-booker.herokuapp.com/booking/"+BookingId,{headers:{"Cookie": "token="+authtoken, "Accept": "application/json"}})
     console.log("Token being sent: " + authtoken);
-    console.log((await del).status());
-     console.log((await del).statusText());
-     await expect(del.status()).toBe(201);
+      console.log(del.status());
+   console.log(del.statusText());
+      expect(del.status()).toBe(201);
+     const deleted = await request.get("https://restful-booker.herokuapp.com/booking/"+BookingId);
+      expect(deleted.status()).toBe(404);
+      expect(deleted.statusText()).toBe("Not Found");
+
+
 }
 
 )
+
+
+
 
 test("Negative : Token not passed",async({request})=>{
 
-    const del = await request.delete("https://restful-booker.herokuapp.com/booking/"+BookingId,{headers:{"Cookie": "token="+invalidtoken, "Accept": "application/json"}})
+    const neg = await request.delete("https://restful-booker.herokuapp.com/booking/"+BookingId,{headers:{"Cookie": "token="+invalidtoken, "Accept": "application/json"}})
+    
     console.log("Token being sent: " + invalidtoken);
-    console.log((await del).status());
-     console.log((await del).statusText());
 
-      await expect(del.status()).toBe(403);
-     await expect((await del).statusText()).toBe('Forbidden');
+    console.log(neg.status());
+   console.log(neg.statusText());
+    
+
+       expect(neg.status()).toBe(403);
+      expect(neg.statusText()).toBe('Forbidden');
 
 
 }
 
 )
 
-test("Negative/Fail expect",async({request})=>{
 
-  const bookinbody={
-         "firstname" : "Jim",
-    "lastname" : "Brown",
-    "totalprice" : 111,
-    "depositpaid" : true,
-    "bookingdates" : {
-        "checkin" : "2018-01-01",
-        "checkout" : "2019-01-01"
-    },
-    "additionalneeds" : "Breakfast"
-    }
-
-   const BookingNew = await request.post("https://restful-booker.herokuapp.com/booking",{ data:bookinbody,headers:{"Cookie": "token="+authtoken}})
-
-   const booking = await BookingNew.json();
-    await expect(BookingNew.status()).toBe(201);
-   console.log(booking);
-  
-})
