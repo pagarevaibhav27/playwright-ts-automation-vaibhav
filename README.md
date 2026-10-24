@@ -10,11 +10,11 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 
 | Spec file | Scenarios |
 |---|---|
-| `tests/HappyPath.spec.ts` | Serial end-to-end purchase flow: login, add backpack to cart, remove it and continue shopping, add again, checkout, fill the form, finish the order |
-| `tests/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
-| `tests/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
-| `tests/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
-| `tests/auth.setup.ts` | Setup project that logs in once and saves the session for tests that need it |
+| `tests/ui/HappyPath.spec.ts` | Serial end-to-end purchase flow: login, add backpack to cart, remove it and continue shopping, add again, checkout, fill the form, finish the order |
+| `tests/ui/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
+| `tests/ui/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
+| `tests/api/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
+| `tests/auth.setup.ts` | Setup project that logs in once and saves the session for the UI tests that need it |
 
 ## Tech stack
 
@@ -23,7 +23,8 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 - `data-test` attribute locators for stable element selection
 - Playwright `request` fixture for API testing
 - `storageState` to log in once and reuse the session
-- Cross-browser runs: Chromium, Firefox and WebKit
+- Separate UI and API projects, with UI tests running on Chromium, Firefox and WebKit
+- Test tags (`@smoke`, `@sanity`) to run subsets
 - GitHub Actions CI with the HTML report uploaded as an artifact
 
 ## Project structure
@@ -37,14 +38,24 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 │   ├── CartPage.ts
 │   ├── Checkoutform.ts
 │   └── CheckoutOverview.ts
-├── tests/                             # Test specs
+├── tests/
 │   ├── auth.setup.ts                  # Logs in once, saves the session
-│   ├── HappyPath.spec.ts
-│   ├── InvalidLogin.spec.ts
-│   ├── ReuseLogin.spec.ts
-│   └── APITesting.spec.ts
-└── playwright.config.ts               # Base URL, browsers, setup project, reporter, retries
+│   ├── ui/                            # UI specs
+│   │   ├── HappyPath.spec.ts
+│   │   ├── InvalidLogin.spec.ts
+│   │   └── ReuseLogin.spec.ts
+│   └── api/                           # API specs
+│       └── APITesting.spec.ts
+└── playwright.config.ts               # Base URL, projects, reporter, retries
 ```
+
+## Projects
+
+| Project | What it runs |
+|---|---|
+| `setup` | `auth.setup.ts`: logs in once and saves the session |
+| `ui-chromium`, `ui-firefox`, `ui-webkit` | UI specs from `tests/ui`, after `setup` |
+| `api` | API specs from `tests/api`, with no browser and no login |
 
 ## Getting started
 
@@ -57,14 +68,21 @@ npm ci
 # install the Playwright browsers
 npx playwright install
 
-# run all tests (headless, all browsers)
+# run everything
 npx playwright test
 
-# run in a visible browser, Chromium only
-npx playwright test --project=chromium --headed
+# run all UI tests in every browser
+npx playwright test --project="ui-*"
+
+# run UI tests in one visible browser
+npx playwright test --project=ui-chromium --headed
 
 # run the API tests only
-npx playwright test tests/APITesting.spec.ts --project=chromium
+npx playwright test --project=api
+
+# run tagged subsets
+npx playwright test --grep "@smoke"
+npx playwright test --grep "@sanity"
 
 # open the HTML report
 npx playwright show-report
@@ -73,8 +91,10 @@ npx playwright show-report
 ## Design notes
 
 - **Page Object Model:** each page class holds its locators and actions, and the specs only contain test steps and assertions.
-- **Saved login:** a `setup` project logs in once and writes the session to `playwright/.auth/user.json` (git-ignored). Browser projects depend on it, so tests that need a logged-in start load the session instead of repeating the login. Tests that must start logged out (the login tests) opt out with an empty `storageState`.
+- **Saved login:** a `setup` project logs in once and writes the session to `playwright/.auth/user.json` (git-ignored). The UI projects depend on it, so tests that need a logged-in start load the session instead of repeating the login. Tests that must start logged out (the login tests) opt out with an empty `storageState`.
+- **Separate UI and API projects:** the API project has no browser and no dependency on the login setup, so it runs once and independently of the SauceDemo site.
 - **Serial flows:** `HappyPath.spec.ts` and `APITesting.spec.ts` run in `serial` mode because each step depends on the previous one. The API tests share the auth token and booking id through variables declared at the top of the file.
+- **Tags:** tests carry `@smoke` and `@sanity` tags. A tag only labels a test, and `--grep` filters on it.
 - **CI:** every push and pull request to `main` runs the full suite on GitHub Actions. Retries are enabled on CI only, and traces are captured on the first retry.
 - **Test data:** the credentials used are the public demo accounts published by SauceDemo and Restful Booker.
 
@@ -82,7 +102,8 @@ npx playwright show-report
 
 - [x] Reusable login via `storageState`
 - [x] API tests with Playwright's `request` against [Restful Booker](https://restful-booker.herokuapp.com)
-- [ ] `@smoke` and `@regression` tags
+- [x] Separate UI and API projects
+- [x] Test tags (`@smoke`, `@sanity`) to run subsets
 - [ ] More negative scenarios (locked-out user, empty checkout fields)
 
 ## Author
