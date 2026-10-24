@@ -109,4 +109,4 @@ npx playwright show-report
 ## Author
 
 **Vaibhav Pagare**, QA Engineer | API Testing | Test Automation
-[LinkedIn](https://www.linkedin.com/in/your-profile) · pagarevaibhav@gmail.com
+[LinkedIn](https://www.linkedin.com/in/vaibhav-pagare-41b571b9/) · pagarevaibhav@gmail.com
