@@ -9,7 +9,7 @@ const invalidtoken = "invalidtok";
 
 
 
-test("Auth",async({request})=>{
+test("Auth",{ tag: ['@smoke','@sanity' ]},async({request})=>{
 
     const authbody ={
          "username" : "admin",
@@ -29,7 +29,7 @@ test("Auth",async({request})=>{
 
 //passing auth in post api
 
-test("Create New Booking",async ({request})=>{
+test("Create New Booking",{ tag: ['@smoke','@sanity' ]},async ({request})=>{
 
     const bookinbody={
          "firstname" : "Jim",
@@ -53,16 +53,15 @@ test("Create New Booking",async ({request})=>{
 }
 )
 
-test("TEST GET created Booking ",async ({request})=>{
+test("TEST GET created Booking ",{ tag: ['@smoke','@sanity' ]},async ({request})=>{
     const geturl = "https://restful-booker.herokuapp.com/booking/"+BookingId;
     console.log("get url formed is "+geturl)
 
    const  getreponse = await request.get(geturl);
-     console.log("get response is",getreponse.json());
+     console.log("get response is",await getreponse.json());
 
     const resstatus =  getreponse.status();
     const resstatustext =  getreponse.statusText();
-   //const res = await getreponse.json();
    const res = await getreponse.json();
   
    console.log(resstatus);
@@ -79,7 +78,7 @@ expect(res.totalprice).toBe(111);
 
 
 //Updating booking created in previous test by passing the booking ID
-test("Test PUT for booking id created in POST Test",async({request})=>{
+test("Test PUT for booking id created in POST Test",{ tag: ['@sanity' ]},async({request})=>{
 
     const putbody ={
     "firstname" : "James",
@@ -129,7 +128,7 @@ test("DELETE created/updated booking record",async({request})=>{
 
 
 
-test("Negative : Token not passed",async({request})=>{
+test("Negative : Token not passed",{ tag: ['@sanity' ]},async({request})=>{
 
     const neg = await request.delete("https://restful-booker.herokuapp.com/booking/"+BookingId,{headers:{"Cookie": "token="+invalidtoken, "Accept": "application/json"}})
     
