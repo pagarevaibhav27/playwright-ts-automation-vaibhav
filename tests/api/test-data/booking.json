@@ -1,0 +1,8 @@
+[
+  { "firstname": "Jim_fromjsonfile", "lastname": "Brown", "totalprice": 111, "depositpaid": true,
+    "bookingdates": { "checkin": "2018-01-01", "checkout": "2019-01-01" }, "additionalneeds": "Breakfast" },
+  { "firstname": "Sally", "lastname": "Smith", "totalprice": 250, "depositpaid": false,
+    "bookingdates": { "checkin": "2024-05-10", "checkout": "2024-05-15" }, "additionalneeds": "Lunch" },
+  { "firstname": "Raj", "lastname": "Patil", "totalprice": 90, "depositpaid": true,
+    "bookingdates": { "checkin": "2025-01-01", "checkout": "2025-01-03" }, "additionalneeds": "None" }
+]
