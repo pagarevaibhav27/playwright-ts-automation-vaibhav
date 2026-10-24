@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import { InventoryPage } from '../pages/InventoryPage';
+import { InventoryPage } from '../../pages/InventoryPage';
 
 test('Reusing Login state from storageState',async({page})=>{
 const inventoryPage = new InventoryPage(page);

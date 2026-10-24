@@ -36,20 +36,29 @@ export default defineConfig({
   /* Configure projects for major browsers */
  projects: [
   { name: 'setup', testMatch: /.*\.setup\.ts/ },
+
   {
-    name: 'chromium',
+    name: 'ui-chromium',
+    testDir: './tests/ui',
     use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
     dependencies: ['setup'],
   },
   {
-    name: 'firefox',
+    name: 'ui-firefox',
+    testDir: './tests/ui',
     use: { ...devices['Desktop Firefox'], storageState: 'playwright/.auth/user.json' },
     dependencies: ['setup'],
   },
   {
-    name: 'webkit',
+    name: 'ui-webkit',
+    testDir: './tests/ui',
     use: { ...devices['Desktop Safari'], storageState: 'playwright/.auth/user.json' },
     dependencies: ['setup'],
+  },
+
+  {
+    name: 'api',
+    testDir: './tests/api',
   },
 ],
 
