@@ -71,33 +71,6 @@ test("Create New Booking",async ({request})=>{
 }
 )
 
-<<<<<<< Updated upstream
-=======
-test("TEST GET created Booking ",async ({request})=>{
-    const geturl = "https://restful-booker.herokuapp.com/booking/"+BookingId;
-    console.log("get url formed is "+geturl)
-
-   const  getreponse = await request.get(geturl);
-     console.log("get response is",await getreponse.json());
-
-    const resstatus =  getreponse.status();
-    const resstatustext =  getreponse.statusText();
-   //const res = await getreponse.json();
-   const res = await getreponse.json();
-  
-   console.log(resstatus);
-    console.log(resstatustext);
-    console.log(res);
-     expect(getreponse.status()).toBe(200);
-     expect(res.firstname).toBe('Jim');
-expect(res.totalprice).toBe(111);
-
-}
-
-)
-
-
->>>>>>> Stashed changes
 
 //Updating booking created in previous test by passing the booking ID
 test("Test PUT for booking id created in POST Test",async({request})=>{
@@ -142,14 +115,7 @@ test("DELETE created/updated booking record",async({request})=>{
 
 )
 
-<<<<<<< Updated upstream
 test("Negative : Token not passed",async({request})=>{
-=======
-
-
-
-test("Negative : DELETE with invalid token returns 403",async({request})=>{
->>>>>>> Stashed changes
 
     const del = await request.delete("https://restful-booker.herokuapp.com/booking/"+BookingId,{headers:{"Cookie": "token="+invalidtoken, "Accept": "application/json"}})
     console.log("Token being sent: " + invalidtoken);
