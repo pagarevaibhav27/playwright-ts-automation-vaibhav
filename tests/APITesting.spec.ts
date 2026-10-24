@@ -46,7 +46,7 @@ test("Create New Booking",async ({request})=>{
    const BookingNew = await request.post("https://restful-booker.herokuapp.com/booking",{ data:bookinbody,headers:{"Cookie": "token="+authtoken}})
 
    const booking = await BookingNew.json();
-    await expect(BookingNew.status()).toBe(200);
+     expect(BookingNew.status()).toBe(200);
    console.log(booking);
    BookingId = booking.bookingid;
    console.log("Booking created with ID "+BookingId)
