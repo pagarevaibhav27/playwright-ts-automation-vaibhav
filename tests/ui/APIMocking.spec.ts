@@ -1,10 +1,15 @@
 import {test,expect} from "@playwright/test";
 
 import fs from 'fs';
+  test.use({ video: 'on' });
 
 let BookMockBody = JSON.parse(fs.readFileSync('tests/api/test-data/BookMockBody.json', 'utf-8'));
 
+
+
+ 
 test('Fulfill books request using stored json response', async ({ page }) => {
+  
 
   await page.route("https://demoqa.com/BookStore/v1/Books", async route => {
     await route.fulfill({ status: 200,json: BookMockBody });
@@ -15,4 +20,15 @@ test('Fulfill books request using stored json response', async ({ page }) => {
 
   await expect(page.getByText('THIS IS TEST2')).toBeVisible();
   await page.screenshot({ path: "screenshots/mocked-books.png" });
+
+
+})
+;
+//visual test
+test('books page matches baseline', { tag: ['@visual'] }, async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Visual baseline kept for Chromium only');
+  await page.goto("https://demoqa.com/books");
+  //await page.goto('/inventory.html');
+  await expect(page).toHaveScreenshot('screenshots/mocked-booksSS.png', { maxDiffPixelRatio: 0.01 });
 });
+
