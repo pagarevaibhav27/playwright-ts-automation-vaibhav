@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
-import { CheckoutForm } from '../../pages/Checkoutform';
+import { CheckoutForm } from '../../pages/CheckoutForm';
 import { CheckoutOverview } from '../../pages/CheckoutOverview';
 test.use({ storageState: { cookies: [], origins: [] } });
 //serial mode - login >> Add to Cart >> remove from Cart and contunie shopping>>add to cart and fill checkout and finsh

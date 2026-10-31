@@ -13,6 +13,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 | `tests/ui/HappyPath.spec.ts` | Serial end-to-end purchase flow: login, add backpack to cart, remove it and continue shopping, add again, checkout, fill the form, finish the order |
 | `tests/ui/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
 | `tests/ui/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
+| `tests/ui/APIMocking.spec.ts` | Network mocking with `page.route`: intercepts the DemoQA books API call, returns a stored JSON response from `tests/api/test-data/BookMockBody.json`, and asserts the mocked book appears on the page |
 | `tests/api/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
 | `tests/api/HealthCheck.spec.ts` | Health check on Restful Booker `GET /ping`: repeatedly calls the endpoint for 60 seconds and asserts a 201 status and a response time under a set threshold on every call |
 | `tests/api/DataDrivenAPITests.spec.ts` | Data-driven POST tests: reads several booking records from `tests/api/test-data/booking.json`, creates one test per record, and asserts the response matches the data sent |
@@ -24,6 +25,8 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 - Page Object Model for maintainable locators and actions
 - `data-test` attribute locators for stable element selection
 - Playwright `request` fixture for API testing, with data-driven tests fed from JSON files
+- Network mocking with `page.route` and stored JSON responses
+- Screenshots, videos and traces captured for failed tests
 - `storageState` to log in once and reuse the session
 - Separate UI and API projects, with UI tests running on Chromium, Firefox and WebKit
 - Test tags (`@smoke`, `@sanity`) to run subsets
@@ -43,6 +46,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 ├── tests/
 │   ├── auth.setup.ts                  # Logs in once, saves the session
 │   ├── ui/                            # UI specs
+│   │   ├── APIMocking.spec.ts
 │   │   ├── HappyPath.spec.ts
 │   │   ├── InvalidLogin.spec.ts
 │   │   └── ReuseLogin.spec.ts
@@ -51,8 +55,10 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 │       ├── DataDrivenAPITests.spec.ts
 │       ├── HealthCheck.spec.ts
 │       └── test-data/
-│           └── booking.json       # Records for the data-driven tests
-└── playwright.config.ts               # Base URL, projects, reporter, retries
+│           ├── booking.json       # Records for the data-driven tests
+│           └── BookMockBody.json  # Mocked response used by the mocking test
+├── tsconfig.json                      # TypeScript settings
+└── playwright.config.ts               # Base URL, projects, reporter, retries, capture settings
 ```
 
 ## Projects
@@ -94,6 +100,8 @@ npx playwright test --grep "@sanity"
 npx playwright show-report
 ```
 
+Failed tests keep a screenshot, a video and a trace. Open them from the HTML report's Attachments section, or from the `test-results` folder.
+
 ## Design notes
 
 - **Page Object Model:** each page class holds its locators and actions, and the specs only contain test steps and assertions.
@@ -102,6 +110,8 @@ npx playwright show-report
 - **Serial flows:** `HappyPath.spec.ts` and `APITesting.spec.ts` run in `serial` mode because each step depends on the previous one. The API tests share the auth token and booking id through variables declared at the top of the file.
 - **Health check:** a separate API spec polls `/ping` for 60 seconds and fails on any non-201 status or any response slower than the threshold, a basic availability and response-time check.
 - **Data-driven tests:** test data lives in a JSON file, and the spec loops over the records so each one becomes its own test, named after its data. Adding a scenario is one new record and no code change.
+- **Network mocking:** the mocking test registers `page.route` before navigating, so the page receives a controlled response. This makes the test independent of the live service and lets it create cases a real server can't give on demand. The real API tests still run against Restful Booker.
+- **Failure evidence:** the config records a screenshot and a video only for failed tests (`retain-on-failure`), and a trace on the first retry, which keeps runs light and still gives full evidence for debugging.
 - **Tags:** tests carry `@smoke` and `@sanity` tags. A tag only labels a test, and `--grep` filters on it.
 - **CI:** every push and pull request to `main` runs the full suite on GitHub Actions. Retries are enabled on CI only, and traces are captured on the first retry.
 - **Test data:** the credentials used are the public demo accounts published by SauceDemo and Restful Booker.
