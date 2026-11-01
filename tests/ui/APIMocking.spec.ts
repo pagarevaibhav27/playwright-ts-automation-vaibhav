@@ -16,7 +16,7 @@ test('Fulfill books request using stored json response', async ({ page }) => {
   });                                           
 
   await page.goto("https://demoqa.com/books");
-  await page.waitForTimeout(15000);
+  //await page.waitForTimeout(15000);
 
   await expect(page.getByText('THIS IS TEST2')).toBeVisible();
   await page.screenshot({ path: "screenshots/mocked-books.png" });
@@ -24,11 +24,4 @@ test('Fulfill books request using stored json response', async ({ page }) => {
 
 })
 ;
-//visual test
-test('books page matches baseline', { tag: ['@visual'] }, async ({ page, browserName }) => {
-  test.skip(browserName !== 'chromium', 'Visual baseline kept for Chromium only');
-  await page.goto("https://demoqa.com/books");
-  //await page.goto('/inventory.html');
-  await expect(page).toHaveScreenshot('screenshots/mocked-booksSS.png', { maxDiffPixelRatio: 0.01 });
-});
 

@@ -14,6 +14,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 | `tests/ui/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
 | `tests/ui/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
 | `tests/ui/APIMocking.spec.ts` | Network mocking with `page.route`: intercepts the DemoQA books API call, returns a stored JSON response from `tests/api/test-data/BookMockBody.json`, and asserts the mocked book appears on the page |
+| `tests/ui/VisualTest.spec.ts` | Visual comparison with `toHaveScreenshot()`: compares the SauceDemo inventory page and the books page against committed baseline images (Chromium, run locally) |
 | `tests/api/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
 | `tests/api/HealthCheck.spec.ts` | Health check on Restful Booker `GET /ping`: repeatedly calls the endpoint for 60 seconds and asserts a 201 status and a response time under a set threshold on every call |
 | `tests/api/DataDrivenAPITests.spec.ts` | Data-driven POST tests: reads several booking records from `tests/api/test-data/booking.json`, creates one test per record, and asserts the response matches the data sent |
@@ -26,6 +27,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 - `data-test` attribute locators for stable element selection
 - Playwright `request` fixture for API testing, with data-driven tests fed from JSON files
 - Network mocking with `page.route` and stored JSON responses
+- Visual comparison tests with baseline screenshots
 - Screenshots, videos and traces captured for failed tests
 - `storageState` to log in once and reuse the session
 - Separate UI and API projects, with UI tests running on Chromium, Firefox and WebKit
@@ -49,7 +51,9 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 │   │   ├── APIMocking.spec.ts
 │   │   ├── HappyPath.spec.ts
 │   │   ├── InvalidLogin.spec.ts
-│   │   └── ReuseLogin.spec.ts
+│   │   ├── ReuseLogin.spec.ts
+│   │   ├── VisualTest.spec.ts
+│   │   └── VisualTest.spec.ts-snapshots/   # Baseline images
 │   └── api/                           # API specs
 │       ├── APITesting.spec.ts
 │       ├── DataDrivenAPITests.spec.ts
@@ -92,6 +96,9 @@ npx playwright test --project=ui-chromium --headed
 # run the API tests only
 npx playwright test --project=api
 
+# run visual comparison tests (locally)
+npx playwright test --grep "@visual" --project=ui-chromium
+
 # run tagged subsets
 npx playwright test --grep "@smoke"
 npx playwright test --grep "@sanity"
@@ -112,6 +119,7 @@ Failed tests keep a screenshot, a video and a trace. Open them from the HTML rep
 - **Data-driven tests:** test data lives in a JSON file, and the spec loops over the records so each one becomes its own test, named after its data. Adding a scenario is one new record and no code change.
 - **Network mocking:** the mocking test registers `page.route` before navigating, so the page receives a controlled response. This makes the test independent of the live service and lets it create cases a real server can't give on demand. The real API tests still run against Restful Booker.
 - **Failure evidence:** the config records a screenshot and a video only for failed tests (`retain-on-failure`), and a trace on the first retry, which keeps runs light and still gives full evidence for debugging.
+- **Visual comparison:** `toHaveScreenshot()` saves a baseline image on the first run and compares against it afterwards. Baselines are created per operating system, so these tests are tagged `@visual` and run locally; refresh them after an intended UI change with `--update-snapshots`.
 - **Tags:** tests carry `@smoke` and `@sanity` tags. A tag only labels a test, and `--grep` filters on it.
 - **CI:** every push and pull request to `main` runs the full suite on GitHub Actions. Retries are enabled on CI only, and traces are captured on the first retry.
 - **Test data:** the credentials used are the public demo accounts published by SauceDemo and Restful Booker.
