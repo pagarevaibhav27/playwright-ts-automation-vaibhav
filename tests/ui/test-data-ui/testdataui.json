@@ -1,0 +1,48 @@
+[
+
+
+    {"username":"standard_user",
+    "password" :"secret_sauce",
+    "expected" : "success",
+    "run":false
+    },
+
+    
+         {"username":"locked_out_user",
+    "password" :"secret_sauce",
+    "expected" : "failure",
+    "run":false
+    },
+           {"username":"problem_user",
+    "password" :"secret_sauce",
+    "expected" : "success",
+    "run":true
+    },
+      {"username":"performance_glitch_user",
+    "password" :"secret_sauce",
+    "expected" : "success",
+    "run":true
+    },
+    {"username":"error_user",
+    "password" :"secret_sauce",
+    "expected" : "success",
+    "run":true
+    },
+     {"username":"visual_user",
+    "password" :"secret_sauce",
+    "expected" : "success",
+    "run":false
+    },
+     {"username":"invalidcreds",
+    "password" :"wrongpassword",
+    "expected" : "failure",
+    "run":true
+    }
+
+
+
+
+
+
+    
+]

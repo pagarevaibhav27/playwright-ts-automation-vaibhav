@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test'
 
 
-test('Visual Test for Saucedemo inventory page',{tag:['@visual','@sanity']},async({page})=>{
+test('Visual Test for Saucedemo inventory page',{tag:['@visual']},async({page})=>{
 
    await page.goto("https://www.saucedemo.com/inventory.html");
    await expect (page).toHaveScreenshot('baselineScreenshots/SaucedemoInventory.png',{maxDiffPixelRatio:0.01});

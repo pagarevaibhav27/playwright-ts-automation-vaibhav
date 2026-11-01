@@ -47,7 +47,7 @@ export default defineConfig({
     testDir: './tests/ui',
     use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json'},
     
-    dependencies: ['setup'],
+   // dependencies: ['setup'],
     
   },
   {
