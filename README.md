@@ -14,6 +14,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 | `tests/ui/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
 | `tests/ui/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
 | `tests/ui/APIMocking.spec.ts` | Network mocking with `page.route`: intercepts the DemoQA books API call, returns a stored JSON response from `tests/api/test-data/BookMockBody.json`, and asserts the mocked book appears on the page |
+| `tests/ui/DataDrivenUITest.spec.ts` | Data-driven login tests: reads users from `tests/ui/test-data-ui/testdataui.json` and creates one test per record. Each record has an `expected` outcome (success lands on the inventory page, failure shows an error) and a `run` flag to switch rows on or off |
 | `tests/ui/VisualTest.spec.ts` | Visual comparison with `toHaveScreenshot()`: compares the SauceDemo inventory page and the books page against committed baseline images (Chromium, run locally) |
 | `tests/api/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
 | `tests/api/HealthCheck.spec.ts` | Health check on Restful Booker `GET /ping`: repeatedly calls the endpoint for 60 seconds and asserts a 201 status and a response time under a set threshold on every call |
@@ -25,7 +26,8 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 - Playwright Test with TypeScript
 - Page Object Model for maintainable locators and actions
 - `data-test` attribute locators for stable element selection
-- Playwright `request` fixture for API testing, with data-driven tests fed from JSON files
+- Playwright `request` fixture for API testing
+- Data-driven UI and API tests fed from JSON files
 - Network mocking with `page.route` and stored JSON responses
 - Visual comparison tests with baseline screenshots
 - Screenshots, videos and traces captured for failed tests
@@ -43,17 +45,20 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 │   ├── LoginPage.ts
 │   ├── InventoryPage.ts
 │   ├── CartPage.ts
-│   ├── Checkoutform.ts
+│   ├── CheckoutForm.ts
 │   └── CheckoutOverview.ts
 ├── tests/
 │   ├── auth.setup.ts                  # Logs in once, saves the session
 │   ├── ui/                            # UI specs
 │   │   ├── APIMocking.spec.ts
+│   │   ├── DataDrivenUITest.spec.ts
 │   │   ├── HappyPath.spec.ts
 │   │   ├── InvalidLogin.spec.ts
 │   │   ├── ReuseLogin.spec.ts
 │   │   ├── VisualTest.spec.ts
-│   │   └── VisualTest.spec.ts-snapshots/   # Baseline images
+│   │   ├── VisualTest.spec.ts-snapshots/   # Baseline images
+│   │   └── test-data-ui/
+│   │       └── testdataui.json         # Users for the data-driven login tests
 │   └── api/                           # API specs
 │       ├── APITesting.spec.ts
 │       ├── DataDrivenAPITests.spec.ts
@@ -116,7 +121,8 @@ Failed tests keep a screenshot, a video and a trace. Open them from the HTML rep
 - **Separate UI and API projects:** the API project has no browser and no dependency on the login setup, so it runs once and independently of the SauceDemo site.
 - **Serial flows:** `HappyPath.spec.ts` and `APITesting.spec.ts` run in `serial` mode because each step depends on the previous one. The API tests share the auth token and booking id through variables declared at the top of the file.
 - **Health check:** a separate API spec polls `/ping` for 60 seconds and fails on any non-201 status or any response slower than the threshold, a basic availability and response-time check.
-- **Data-driven tests:** test data lives in a JSON file, and the spec loops over the records so each one becomes its own test, named after its data. Adding a scenario is one new record and no code change.
+- **Data-driven UI tests:** each user record in `testdataui.json` carries its credentials, the expected outcome and a `run` flag. The spec loops over the records and creates one named test per enabled row, so adding a scenario or switching one off is a data change only.
+- **Data-driven API tests:** test data lives in a JSON file, and the spec loops over the records so each one becomes its own test, named after its data. Adding a scenario is one new record and no code change.
 - **Network mocking:** the mocking test registers `page.route` before navigating, so the page receives a controlled response. This makes the test independent of the live service and lets it create cases a real server can't give on demand. The real API tests still run against Restful Booker.
 - **Failure evidence:** the config records a screenshot and a video only for failed tests (`retain-on-failure`), and a trace on the first retry, which keeps runs light and still gives full evidence for debugging.
 - **Visual comparison:** `toHaveScreenshot()` saves a baseline image on the first run and compares against it afterwards. Baselines are created per operating system, so these tests are tagged `@visual` and run locally; refresh them after an intended UI change with `--update-snapshots`.
