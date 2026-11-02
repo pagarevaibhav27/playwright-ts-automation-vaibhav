@@ -9,7 +9,7 @@ let logindata = JSON.parse(fs.readFileSync('tests/ui/test-data-ui/testdataui.jso
 //console.log("parsed json is -" ,logindata);
 test.use({ storageState: { cookies: [], origins: [] } });
 
-logindata.forEach( data => {
+logindata.forEach( (data:any) => {
     if(data.run==true){
 test(`Data Driven Login Test for Login User = ${data.username}`,{tag:['@DataDriven','@sanity']}, async ({ page}) => {
 const loginpageo = new LoginPage(page);
