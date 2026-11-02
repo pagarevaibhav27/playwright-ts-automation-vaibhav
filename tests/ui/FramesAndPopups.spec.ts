@@ -26,14 +26,11 @@ await page.goto('https://the-internet.herokuapp.com/');
  const popup = await popupPromise;
  await expect(popup.getByRole('heading', { name: 'New Window' })).toBeVisible();
  await expect(popup).toHaveURL('https://the-internet.herokuapp.com/windows/new');
-
-
-
 }
 
 );
 
-test('Test dailoge handling',async({page})=>{
+test('Test Dailog Handling',async({page})=>{
 
 await page.goto('https://the-internet.herokuapp.com/');
 await page.getByText('JavaScript Alerts').click();
