@@ -31,4 +31,44 @@ await page.goto('https://the-internet.herokuapp.com/');
 
 }
 
-)
+);
+
+test('Test dailoge handling',async({page})=>{
+
+await page.goto('https://the-internet.herokuapp.com/');
+await page.getByText('JavaScript Alerts').click();
+await expect(page).toHaveURL('https://the-internet.herokuapp.com/javascript_alerts');
+    //dialog Accept/OK
+   page.once('dialog', async (dialog) => {               
+     expect(dialog.message()).toBe('I am a JS Alert');
+     await dialog.accept();
+   });
+
+   await page.getByRole('button', { name: 'Click for JS Alert' }).click();
+   await expect(page.locator('#result')).toHaveText('You successfully clicked an alert');
+
+
+   //Dailog cancel
+    page.once('dialog', async (dialog2) => {
+     expect(dialog2.message()).toBe('I am a JS Confirm');
+     await dialog2.dismiss();
+   });
+
+   await page.getByRole('button', { name: 'Click for JS Confirm' }).click();
+
+   await expect(page.locator('#result')).toHaveText('You clicked: Cancel');
+
+   //dailog OK with filling dialog text
+   page.once('dialog',async(dailogOK) => {
+    expect(dailogOK.message()).toBe('I am a JS prompt');
+    await dailogOK.accept('THIS IS A TEST');
+
+   });
+    await page.getByRole('button',{name: 'Click for JS Prompt'}).click();
+
+    await expect(page.locator('#result')).toHaveText('You entered: THIS IS A TEST');
+
+
+});
+
+

@@ -14,6 +14,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 | `tests/ui/InvalidLogin.spec.ts` | Login with a wrong password shows the expected error message |
 | `tests/ui/ReuseLogin.spec.ts` | Starts already logged in using a saved session, then adds the backpack to the cart |
 | `tests/ui/APIMocking.spec.ts` | Network mocking with `page.route`: intercepts the DemoQA books API call, returns a stored JSON response from `tests/api/test-data/BookMockBody.json`, and asserts the mocked book appears on the page |
+| `tests/ui/FramesAndPopups.spec.ts` | Browser handling on the-internet.herokuapp.com: nested iframes with `frameLocator`, a new browser window with `waitForEvent('popup')`, and JavaScript alert, confirm and prompt dialogs (accept, dismiss and typed input) |
 | `tests/ui/DataDrivenUITest.spec.ts` | Data-driven login tests: reads users from `tests/ui/test-data-ui/testdataui.json` and creates one test per record. Each record has an `expected` outcome (success lands on the inventory page, failure shows an error) and a `run` flag to switch rows on or off |
 | `tests/ui/VisualTest.spec.ts` | Visual comparison with `toHaveScreenshot()`: compares the SauceDemo inventory page and the books page against committed baseline images (Chromium, run locally) |
 | `tests/api/APITesting.spec.ts` | Restful Booker API chain: get auth token, create a booking, fetch it and verify its fields, update it, delete it and confirm a 404 afterwards, and verify a delete with an invalid token returns 403 |
@@ -30,6 +31,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 - Data-driven UI and API tests fed from JSON files
 - Network mocking with `page.route` and stored JSON responses
 - Visual comparison tests with baseline screenshots
+- Handling of iframes, popups and JavaScript dialogs
 - Screenshots, videos and traces captured for failed tests
 - `storageState` to log in once and reuse the session
 - Separate UI and API projects, with UI tests running on Chromium, Firefox and WebKit
@@ -52,6 +54,7 @@ A portfolio project by Vaibhav Pagare, Sr. QA engineer with 11 years of experien
 │   ├── ui/                            # UI specs
 │   │   ├── APIMocking.spec.ts
 │   │   ├── DataDrivenUITest.spec.ts
+│   │   ├── FramesAndPopups.spec.ts
 │   │   ├── HappyPath.spec.ts
 │   │   ├── InvalidLogin.spec.ts
 │   │   ├── ReuseLogin.spec.ts
@@ -125,6 +128,7 @@ Failed tests keep a screenshot, a video and a trace. Open them from the HTML rep
 - **Data-driven API tests:** test data lives in a JSON file, and the spec loops over the records so each one becomes its own test, named after its data. Adding a scenario is one new record and no code change.
 - **Network mocking:** the mocking test registers `page.route` before navigating, so the page receives a controlled response. This makes the test independent of the live service and lets it create cases a real server can't give on demand. The real API tests still run against Restful Booker.
 - **Failure evidence:** the config records a screenshot and a video only for failed tests (`retain-on-failure`), and a trace on the first retry, which keeps runs light and still gives full evidence for debugging.
+- **Frames, popups and dialogs:** frame content is reached through `frameLocator`, which auto-waits like any other locator. For a new window, the test starts waiting for the `popup` event before the click and collects the page afterwards. Dialogs are handled by registering a `dialog` listener before the click, with `accept`, `dismiss` or `accept('text')` depending on the dialog type.
 - **Visual comparison:** `toHaveScreenshot()` saves a baseline image on the first run and compares against it afterwards. Baselines are created per operating system, so these tests are tagged `@visual` and run locally; refresh them after an intended UI change with `--update-snapshots`.
 - **Tags:** tests carry `@smoke` and `@sanity` tags. A tag only labels a test, and `--grep` filters on it.
 - **CI:** every push and pull request to `main` runs the full suite on GitHub Actions. Retries are enabled on CI only, and traces are captured on the first retry.
